@@ -8,13 +8,19 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-<<<<<<< HEAD
+import com.example.mihai.bgssimulator.RealmClasses.TestItem;
 import com.example.mihai.bgssimulator.Simultor.FeedData.DownloadData;
 import com.example.mihai.bgssimulator.Simultor.FeedData.SensorManagement;
 import com.example.mihai.bgssimulator.Simultor.FileSensorLog;
 import com.example.mihai.bgssimulator.Simultor.GatherData.GPSLocation;
 import com.example.mihai.bgssimulator.Simultor.GatherData.SensorHub;
 import com.example.mihai.bgssimulator.Utils.AbsValues;
+import com.example.mihai.bgssimulator.RealmClasses.RealmConfigurations.RealmConfig;
+import com.example.mihai.bgssimulator.RealmClasses.TestItem;
+
+import io.realm.Realm;
+import io.realm.RealmObject;
+import io.realm.Realm;
 
 public class MainActivity extends AppCompatActivity implements SensorManagement.SensorResult {
 
@@ -27,22 +33,12 @@ public class MainActivity extends AppCompatActivity implements SensorManagement.
     private String gatherState = AbsValues.STOP_COLLECT;
     private String feedState = AbsValues.STOP_FEED;
     private SensorManagement sensorManagement;
-=======
-import com.example.mihai.bgssimulator.RealmClasses.RealmConfigurations.RealmConfig;
-import com.example.mihai.bgssimulator.RealmClasses.TestItem;
-
-import io.realm.Realm;
-import io.realm.RealmObject;
-
-public class MainActivity extends AppCompatActivity {
->>>>>>> 3e90cace94351d70e8185178ba440c15db22735f
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-<<<<<<< HEAD
         FileSensorLog.createFiles(this);
         sensorManagement = new SensorManagement(this, this);
         startDataTrack = (Button) findViewById(R.id.startGatherBtn);
@@ -119,7 +115,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void gotOrientation(Float orientationValue) {
         Log.i("Orientation:", orientationValue + "");
-=======
         //testDB();
     }
 
@@ -136,6 +131,5 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         realm.close();
->>>>>>> 3e90cace94351d70e8185178ba440c15db22735f
     }
 }
