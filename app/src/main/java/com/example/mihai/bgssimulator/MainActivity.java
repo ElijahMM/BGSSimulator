@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+<<<<<<< HEAD
 import com.example.mihai.bgssimulator.Simultor.FeedData.DownloadData;
 import com.example.mihai.bgssimulator.Simultor.FeedData.SensorManagement;
 import com.example.mihai.bgssimulator.Simultor.FileSensorLog;
@@ -26,12 +27,22 @@ public class MainActivity extends AppCompatActivity implements SensorManagement.
     private String gatherState = AbsValues.STOP_COLLECT;
     private String feedState = AbsValues.STOP_FEED;
     private SensorManagement sensorManagement;
+=======
+import com.example.mihai.bgssimulator.RealmClasses.RealmConfigurations.RealmConfig;
+import com.example.mihai.bgssimulator.RealmClasses.TestItem;
+
+import io.realm.Realm;
+import io.realm.RealmObject;
+
+public class MainActivity extends AppCompatActivity {
+>>>>>>> 3e90cace94351d70e8185178ba440c15db22735f
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+<<<<<<< HEAD
         FileSensorLog.createFiles(this);
         sensorManagement = new SensorManagement(this, this);
         startDataTrack = (Button) findViewById(R.id.startGatherBtn);
@@ -108,5 +119,23 @@ public class MainActivity extends AppCompatActivity implements SensorManagement.
     @Override
     public void gotOrientation(Float orientationValue) {
         Log.i("Orientation:", orientationValue + "");
+=======
+        //testDB();
+    }
+
+    public void testDB() {
+        Realm realm = Realm.getDefaultInstance();
+        final TestItem testItem1 = new TestItem("a value", 444, true);
+        final TestItem testItem2 = new TestItem("another string", 445, false);
+
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                realm.copyToRealm(testItem1);
+                realm.copyToRealm(testItem2);
+            }
+        });
+        realm.close();
+>>>>>>> 3e90cace94351d70e8185178ba440c15db22735f
     }
 }
