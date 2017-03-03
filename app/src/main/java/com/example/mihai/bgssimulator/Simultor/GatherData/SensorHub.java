@@ -1,4 +1,4 @@
-package com.example.mihai.bgssimulator.Simulator.GatherData;
+package com.example.mihai.bgssimulator.Simultor.GatherData;
 
 import android.content.Context;
 import android.hardware.Sensor;
@@ -6,7 +6,9 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
+import com.example.mihai.bgssimulator.Simultor.FileSensorLog;
 import com.hoan.dsensor_master.DProcessedSensor;
+import com.hoan.dsensor_master.DSensor;
 import com.hoan.dsensor_master.DSensorEvent;
 import com.hoan.dsensor_master.DSensorManager;
 import com.hoan.dsensor_master.interfaces.DProcessedEventListener;
@@ -19,15 +21,10 @@ public class SensorHub implements SensorEventListener {
 
     private Context context;
 
-
     private SensorManager mSensorManager;
-
     private Sensor mStepCounterSensor;
-
     private Sensor mOrientationSensor;
-
     private Sensor resultSensor;
-
     private Sensor barometer;
 
 
@@ -35,6 +32,7 @@ public class SensorHub implements SensorEventListener {
      * pdr variables
      */
     private int stepCounterSensorInitialValue = 0;
+
 
     public void initializeSensorTrack(Context context) {
         this.context = context;
@@ -64,6 +62,7 @@ public class SensorHub implements SensorEventListener {
             mSensorManager.unregisterListener(this, mStepCounterSensor);
             mSensorManager.unregisterListener(this, mOrientationSensor);
             mSensorManager.unregisterListener(this, barometer);
+            DSensorManager.stopDSensor();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -103,11 +102,5 @@ public class SensorHub implements SensorEventListener {
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
 
-    }
-
-    public static abstract class SensorResults {
-        public abstract void gotSensorsResults(int stepsResult);
-
-        public abstract void gotBarometerResults(double altitudeInMeters);
     }
 }
