@@ -50,3 +50,5 @@ captures/
 # Keystore files
 *.jks
 >>>>>>> c80ed7b11867c586975c7c4d00dc079302ae71c3
+libs/
+src/main/res/drawable/

@@ -15,15 +15,25 @@ public class AbsValues {
     public static final String fileGPSName = "gps_log.txt";
     public static final String fileActivityName = "activity_log.txt";
 
-    /**gps localization params*/
+    /**
+     * gps localization params
+     */
     public static final Integer GPS_REQUEST_INTERVAL_DEFAULT = 5000;
     public static final Integer GPS_REQUEST_FASTEST_INTERVAL_DEFAULT = 5000;
     public static final Integer GPS_REQUEST_INTERVAL_INCREASED = 3000;
     public static final Integer GPS_REQUEST_FASTEST_INTERVAL_INCREASED = 2000;
 
 
-    /**gather states*/
+    /**
+     * gather states
+     */
     public static final String COLLECT_DATA = "collect";
     public static final String STOP_COLLECT = "stop_collect";
+
+    /**
+     * feed states
+     */
+    public static final String FEED_DATA = "collect";
+    public static final String STOP_FEED = "stop_collect";
 
 }

@@ -1,4 +1,4 @@
-package com.example.mihai.bgssimulator.Simulator.GatherData;
+package com.example.mihai.bgssimulator.Simultor.GatherData;
 
 import android.content.Context;
 import android.location.Location;
@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.example.mihai.bgssimulator.Simultor.FileSensorLog;
 import com.example.mihai.bgssimulator.Utils.AbsValues;
 import com.example.mihai.bgssimulator.Utils.Settings;
 import com.google.android.gms.common.ConnectionResult;
@@ -18,7 +19,6 @@ import com.google.android.gms.location.LocationServices;
  */
 
 public class GPSLocation implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
-
 
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest locationRequest;
@@ -63,7 +63,7 @@ public class GPSLocation implements GoogleApiClient.ConnectionCallbacks, GoogleA
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        if (Settings.isSimultatorOn) {
+        if (Settings.isSimulatorOn) {
             startLocationUpdates();
         }
     }
