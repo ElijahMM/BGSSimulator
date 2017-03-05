@@ -38,4 +38,11 @@ dependencies {
     /**Realm DB viewer*/
     compile 'com.facebook.stetho:stetho:1.4.1'
     compile 'com.uphyca:stetho_realm:2.0.0'
+
+    //Google Play Services
+    compile 'com.google.android.gms:play-services-maps:9.6.1'
+    compile 'com.google.android.gms:play-services-location:9.6.1'
+    compile 'com.google.android.gms:play-services-gcm:9.6.1'
+
+    compile project(':dsensor')
 }
