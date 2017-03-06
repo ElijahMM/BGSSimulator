@@ -7,5 +7,6 @@ package com.example.mihai.bgssimulator.Utils;
 public class Settings {
 
 
-    public static final boolean isSimulatorOn =true;
+    public static final boolean isSimulatorOn = true;
+    public static final boolean siDBSource = false;
 }

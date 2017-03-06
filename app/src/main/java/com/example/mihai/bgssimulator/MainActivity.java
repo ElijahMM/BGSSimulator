@@ -17,9 +17,12 @@ import com.example.mihai.bgssimulator.Simultor.GatherData.SensorHub;
 import com.example.mihai.bgssimulator.Utils.AbsValues;
 
 
+import junit.framework.Test;
+
 import io.realm.Realm;
-import io.realm.RealmObject;
-import io.realm.Realm;
+import io.realm.RealmResults;
+
+import static io.realm.Realm.getDefaultInstance;
 
 public class MainActivity extends AppCompatActivity implements SensorManagement.SensorResult {
 
@@ -51,47 +54,55 @@ public class MainActivity extends AppCompatActivity implements SensorManagement.
         startDataTrack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (gatherState == AbsValues.STOP_COLLECT) {
-                    FileSensorLog.writeFistTimeStamp();
-                    sensorHub.registerListeners();
-                    gpsLocation.startLocationUpdates();
-
-                    gatherState = AbsValues.COLLECT_DATA;
-                    startDataTrack.setText("Stop gather Data");
-                } else {
-                    gatherState = AbsValues.STOP_COLLECT;
-                    startDataTrack.setText("Start gather Data");
-
-                    sensorHub.unregisterListeners();
-                    gpsLocation.stopLocationUpdate();
-
-                    FileSensorLog.closeFiles();
-                }
+                startTrack();
             }
         });
 
         startFeedData.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (feedState == AbsValues.STOP_FEED) {
-                    sensorManagement.registerFakeSensor();
-                    startFeedData.setText("Stop Feeding");
-                    start();
-                    feedState = AbsValues.FEED_DATA;
-                } else if (feedState == AbsValues.FEED_DATA) {
-                    startFeedData.setText("Start Feeding");
-                    sensorManagement.stop();
-                }
+                startFeed();
             }
         });
     }
 
+    private void startFeed() {
+        if (feedState == AbsValues.STOP_FEED) {
+            sensorManagement.registerFakeSensor();
+            startFeedData.setText("Stop Feeding");
+            start();
+            feedState = AbsValues.FEED_DATA;
+        } else if (feedState == AbsValues.FEED_DATA) {
+            startFeedData.setText("Start Feeding");
+            sensorManagement.stop();
+        }
+    }
+
+    private void startTrack() {
+        if (gatherState == AbsValues.STOP_COLLECT) {
+            FileSensorLog.writeFistTimeStamp();
+            sensorHub.registerListeners();
+            gpsLocation.startLocationUpdates();
+
+            gatherState = AbsValues.COLLECT_DATA;
+            startDataTrack.setText("Stop gather Data");
+        } else {
+            gatherState = AbsValues.STOP_COLLECT;
+            startDataTrack.setText("Start gather Data");
+
+            sensorHub.unregisterListeners();
+            gpsLocation.stopLocationUpdate();
+
+            FileSensorLog.closeFiles();
+        }
+    }
+
 
     public void start() {
-//        sensorManagement.startBarometer();
+        sensorManagement.startBarometer();
         sensorManagement.startGps();
-//        sensorManagement.startOrientation();
-//        sensorManagement.startPDR();
+        sensorManagement.startOrientation();
+        sensorManagement.startPDR();
     }
 
 
@@ -117,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements SensorManagement.
     }
 
     public void testDB() {
-        Realm realm = Realm.getDefaultInstance();
+        Realm realm = getDefaultInstance();
         final TestItem testItem1 = new TestItem("a value", 444, true);
         final TestItem testItem2 = new TestItem("another string", 445, false);
 

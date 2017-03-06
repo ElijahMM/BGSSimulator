@@ -9,8 +9,11 @@ import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels.BarometerValu
 import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels.GpsValueModel;
 import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels.OrientationValueModel;
 import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels.PDRValueModel;
+import com.example.mihai.bgssimulator.Utils.Settings;
 
 import java.util.Queue;
+
+import static com.google.android.gms.internal.zzsu.OB;
 
 /**
  * Created by mihai on 03.03.2017.
@@ -42,13 +45,15 @@ public class SensorManagement {
     public SensorManagement(Context context, SensorResult sensorResult) {
         this.context = context;
         this.sensorResult = sensorResult;
-        downloadData = new DownloadData(this.context);
-
-
+        if (Settings.siDBSource) {
+            downloadData = new DownloadDBData();
+        } else {
+            downloadData = new DownloadFileData(this.context);
+        }
     }
 
 
-    //region get data
+    //region get data from files
     private void feedBarometer() {
         barometerValueQueue = downloadData.getBarometerDatas();
         startTimeStamp = downloadData.getFirstTimeStamp();
@@ -76,6 +81,7 @@ public class SensorManagement {
         feedGps();
         feedBarometer();
         feedOrientation();
+
     }
 
 
@@ -89,74 +95,78 @@ public class SensorManagement {
 
     //region start feed data
     public void startBarometer() {
-        new Runnable() {
-            @Override
-            public void run() {
-                if (barometerValueQueue.isEmpty()) {
-                    mHandler.removeCallbacksAndMessages(null); // stop runnable
-                } else {
-                    currentTimeStamp = barometerValueQueue.peek().getTimeStamp();
-                    mHandler.postDelayed(this, Math.abs(currentTimeStamp - startTimeStamp)); // delay with first timeStamp - second Timestamp
-                    startTimeStamp = currentTimeStamp;
-                    sensorResult.gotBarometer(barometerValueQueue.poll().getBarometerValue());
+        if (!barometerValueQueue.isEmpty()) {
+            new Runnable() {
+                @Override
+                public void run() {
+                    if (barometerValueQueue.isEmpty()) {
+                        mHandler.removeCallbacksAndMessages(null); // stop runnable
+                    } else {
+                        currentTimeStamp = barometerValueQueue.peek().getTimeStamp();
+                        mHandler.postDelayed(this, Math.abs(currentTimeStamp - startTimeStamp)); // delay with first timeStamp - second Timestamp
+                        startTimeStamp = currentTimeStamp;
+                        sensorResult.gotBarometer(barometerValueQueue.poll().getBarometerValue());
+                    }
                 }
-            }
-        }.run();
-
+            }.run();
+        }
 
     }
 
 
     public void startGps() {
-        new Runnable() {
-            @Override
-            public void run() {
-                if (gpsValueQueue.isEmpty()) {
-                    mHandler.removeCallbacksAndMessages(null); // stop runnable
-                } else {
-                    currentTimeStamp = gpsValueQueue.peek().getTimeStamp();
-                    mHandler.postDelayed(this, Math.abs(currentTimeStamp - startTimeStamp)); // delay with first timeStamp - second Timestamp
-                    startTimeStamp = currentTimeStamp;
-                    sensorResult.gotLocation(gpsValueQueue.poll().getLocation());
+        if (!gpsValueQueue.isEmpty()) {
+            new Runnable() {
+                @Override
+                public void run() {
+                    if (gpsValueQueue.isEmpty()) {
+                        mHandler.removeCallbacksAndMessages(null); // stop runnable
+                    } else {
+                        currentTimeStamp = gpsValueQueue.peek().getTimeStamp();
+                        mHandler.postDelayed(this, Math.abs(currentTimeStamp - startTimeStamp)); // delay with first timeStamp - second Timestamp
+                        startTimeStamp = currentTimeStamp;
+                        sensorResult.gotLocation(gpsValueQueue.poll().getLocation());
+                    }
                 }
-            }
-        }.run();
+            }.run();
 
-
+        }
     }
 
     public void startOrientation() {
-        new Runnable() {
-            @Override
-            public void run() {
-                if (orientationValueQueue.isEmpty()) {
-                    mHandler.removeCallbacksAndMessages(null); // stop runnable
-                } else {
-                    currentTimeStamp = orientationValueQueue.peek().getTimeStamp();
-                    mHandler.postDelayed(this, Math.abs(currentTimeStamp - startTimeStamp)); // delay with first timeStamp - second Timestamp
-                    startTimeStamp = currentTimeStamp;
-                    sensorResult.gotOrientation(orientationValueQueue.poll().getOrientationValue());
+        if (!orientationValueQueue.isEmpty()) {
+            new Runnable() {
+                @Override
+                public void run() {
+                    if (orientationValueQueue.isEmpty()) {
+                        mHandler.removeCallbacksAndMessages(null); // stop runnable
+                    } else {
+                        currentTimeStamp = orientationValueQueue.peek().getTimeStamp();
+                        mHandler.postDelayed(this, Math.abs(currentTimeStamp - startTimeStamp)); // delay with first timeStamp - second Timestamp
+                        startTimeStamp = currentTimeStamp;
+                        sensorResult.gotOrientation(orientationValueQueue.poll().getOrientationValue());
+                    }
                 }
-            }
-        }.run();
-
-
+            }.run();
+        }
     }
 
     public void startPDR() {
-        new Runnable() {
-            @Override
-            public void run() {
-                if (pdrValueQueue.isEmpty()) {
-                    mHandler.removeCallbacksAndMessages(null); // stop runnable
-                } else {
-                    currentTimeStamp = pdrValueQueue.peek().getTimeStamp();
-                    mHandler.postDelayed(this, Math.abs(currentTimeStamp - startTimeStamp)); // delay with first timeStamp - second Timestamp
-                    startTimeStamp = currentTimeStamp;
-                    sensorResult.gotStepResult(pdrValueQueue.poll().getStep());
+        if (!pdrValueQueue.isEmpty()) {
+            new Runnable() {
+                @Override
+                public void run() {
+                    if (pdrValueQueue.isEmpty()) {
+                        mHandler.removeCallbacksAndMessages(null); // stop runnable
+                    } else {
+                        currentTimeStamp = pdrValueQueue.peek().getTimeStamp();
+                        mHandler.postDelayed(this, Math.abs(currentTimeStamp - startTimeStamp)); // delay with first timeStamp - second Timestamp
+                        startTimeStamp = currentTimeStamp;
+                        sensorResult.gotStepResult(pdrValueQueue.poll().getStep());
+                    }
                 }
-            }
-        }.run();
+            }.run();
+        }
     }
     //endregion
 
