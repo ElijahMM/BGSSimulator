@@ -11,13 +11,18 @@
     tools:context="com.example.mihai.bgssimulator.MainActivity">
 
     <Button
+        android:id="@+id/clearDbBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="clear DB"/>
+
+    <Button
         android:id="@+id/startGatherBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
         android:text="Start gather Data" />
-
 
     <Button
         android:id="@+id/startFeedDataBtn"

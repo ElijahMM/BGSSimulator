@@ -5,6 +5,7 @@ import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels.BarometerValu
 import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels.GpsValueModel;
 import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels.OrientationValueModel;
 import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels.PDRValueModel;
+import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels.StartTimeModel;
 
 import io.realm.Realm;
 
@@ -33,10 +34,16 @@ public class RealmUtils {
     }
 
     public static void deleteAllSensorData(Realm realm) {
+        realm.beginTransaction();
         deleteBarometerValues(realm);
         deleteGPSValues(realm);
         deleteOrientationValues(realm);
         deletePDRValues(realm);
+
+        realm.where(StartTimeModel.class).findAll().deleteAllFromRealm();
+
+        realm.commitTransaction();
+
     }
 
     /**

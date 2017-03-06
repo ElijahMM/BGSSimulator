@@ -31,7 +31,6 @@ public class DownloadData {
         this.context = context;
     }
 
-
     public Queue<BarometerValueModel> getBarometerDatas() {
         Queue<BarometerValueModel> barometerValueQueue = new LinkedList<>();
         String[] allData = FileSensorLog.readFileContent(context, AbsValues.fileAltitudeName).split("\\$");

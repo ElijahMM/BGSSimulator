@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.mihai.bgssimulator.RealmClasses.RealmConfigurations.RealmUtils;
 import com.example.mihai.bgssimulator.RealmClasses.RealmConfigurations.TestItem;
 
 import com.example.mihai.bgssimulator.Simultor.FeedData.SensorManagement;
@@ -24,7 +25,7 @@ import io.realm.Realm;
 public class MainActivity extends AppCompatActivity implements SensorManagement.SensorResult {
 
 
-    private Button startDataTrack, startFeedData;
+    private Button startDataTrack, startFeedData, clearDbBtn;
     private GPSLocation gpsLocation;
     private SensorHub sensorHub;
 
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements SensorManagement.
         sensorManagement = new SensorManagement(this, this);
         startDataTrack = (Button) findViewById(R.id.startGatherBtn);
         startFeedData = (Button) findViewById(R.id.startFeedDataBtn);
+        clearDbBtn = (Button) findViewById(R.id.clearDbBtn);
 
         gpsLocation = new GPSLocation();
         sensorHub = new SensorHub();
@@ -59,12 +61,12 @@ public class MainActivity extends AppCompatActivity implements SensorManagement.
                     gatherState = AbsValues.COLLECT_DATA;
                     startDataTrack.setText("Stop gather Data");
                 } else {
+
                     gatherState = AbsValues.STOP_COLLECT;
                     startDataTrack.setText("Start gather Data");
 
                     sensorHub.unregisterListeners();
                     gpsLocation.stopLocationUpdate();
-
                     FileSensorLog.closeFiles();
                 }
             }
@@ -85,8 +87,13 @@ public class MainActivity extends AppCompatActivity implements SensorManagement.
             }
         });
 
-//        testDB();
 
+        clearDbBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                RealmUtils.deleteAllSensorData(Realm.getDefaultInstance());
+            }
+        });
     }
 
 
