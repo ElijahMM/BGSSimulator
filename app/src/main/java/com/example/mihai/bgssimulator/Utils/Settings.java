@@ -8,5 +8,5 @@ public class Settings {
 
 
     public static final boolean isSimulatorOn = true;
-    public static final boolean siDBSource = false;
+    public static final boolean siDBSource = true;
 }

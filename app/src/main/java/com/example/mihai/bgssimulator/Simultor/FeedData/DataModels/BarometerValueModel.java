@@ -15,6 +15,10 @@ public class BarometerValueModel extends RealmObject {
     public BarometerValueModel() {
     }
 
+    public BarometerValueModel(Long _timeStamp, Double _barometerValue) {
+        this.timeStamp = _timeStamp;
+        this.barometerValue = _barometerValue;
+    }
 
     public Long getTimeStamp() {
 

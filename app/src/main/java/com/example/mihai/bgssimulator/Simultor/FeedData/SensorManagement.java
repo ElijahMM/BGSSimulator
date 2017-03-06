@@ -45,6 +45,7 @@ public class SensorManagement {
     public SensorManagement(Context context, SensorResult sensorResult) {
         this.context = context;
         this.sensorResult = sensorResult;
+
         if (Settings.siDBSource) {
             downloadData = new DownloadDBData();
         } else {
@@ -53,7 +54,8 @@ public class SensorManagement {
     }
 
 
-    //region get data from files
+    //region get data
+
     private void feedBarometer() {
         barometerValueQueue = downloadData.getBarometerDatas();
         startTimeStamp = downloadData.getFirstTimeStamp();
@@ -75,7 +77,6 @@ public class SensorManagement {
     }
     //endregion
 
-
     public void registerFakeSensor() {
         feedPdr();
         feedGps();
@@ -83,7 +84,6 @@ public class SensorManagement {
         feedOrientation();
 
     }
-
 
     public void stop() {
         gpsValueQueue.clear();

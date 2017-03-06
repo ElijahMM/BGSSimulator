@@ -8,8 +8,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-
+import com.example.mihai.bgssimulator.RealmClasses.RealmConfigurations.RealmUtils;
 import com.example.mihai.bgssimulator.RealmClasses.RealmConfigurations.TestItem;
+
 import com.example.mihai.bgssimulator.Simultor.FeedData.SensorManagement;
 import com.example.mihai.bgssimulator.Simultor.FileSensorLog;
 import com.example.mihai.bgssimulator.Simultor.GatherData.GPSLocation;
@@ -27,7 +28,7 @@ import static io.realm.Realm.getDefaultInstance;
 public class MainActivity extends AppCompatActivity implements SensorManagement.SensorResult {
 
 
-    private Button startDataTrack, startFeedData;
+    private Button startDataTrack, startFeedData, clearDbBtn;
     private GPSLocation gpsLocation;
     private SensorHub sensorHub;
 
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements SensorManagement.
         sensorManagement = new SensorManagement(this, this);
         startDataTrack = (Button) findViewById(R.id.startGatherBtn);
         startFeedData = (Button) findViewById(R.id.startFeedDataBtn);
+        clearDbBtn = (Button) findViewById(R.id.clearDbBtn);
 
         gpsLocation = new GPSLocation();
         sensorHub = new SensorHub();
@@ -55,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements SensorManagement.
             @Override
             public void onClick(View view) {
                 startTrack();
+
             }
         });
 
@@ -62,6 +65,14 @@ public class MainActivity extends AppCompatActivity implements SensorManagement.
             @Override
             public void onClick(View view) {
                 startFeed();
+            }
+        });
+
+
+        clearDbBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                RealmUtils.deleteAllSensorData(Realm.getDefaultInstance());
             }
         });
     }

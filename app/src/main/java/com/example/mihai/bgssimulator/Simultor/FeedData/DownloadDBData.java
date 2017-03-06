@@ -6,6 +6,7 @@ import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels.BarometerValu
 import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels.GpsValueModel;
 import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels.OrientationValueModel;
 import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels.PDRValueModel;
+import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels.StartTimeModel;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -64,6 +65,7 @@ public class DownloadDBData implements DownloadData {
 
     @Override
     public Long getFirstTimeStamp() {
-        return null;
+        RealmResults<StartTimeModel> realmResults = Realm.getDefaultInstance().where(StartTimeModel.class).findAll();
+        return realmResults.get(0).getTimeStamp();
     }
 }

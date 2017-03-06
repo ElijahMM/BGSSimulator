@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels.GpsValueModel;
 import com.example.mihai.bgssimulator.Simultor.FileSensorLog;
 import com.example.mihai.bgssimulator.Utils.AbsValues;
 import com.example.mihai.bgssimulator.Utils.Settings;
@@ -13,6 +14,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+
+import io.realm.Realm;
 
 /**
  * Created by mihai on 02.03.2017.
@@ -23,6 +26,7 @@ public class GPSLocation implements GoogleApiClient.ConnectionCallbacks, GoogleA
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest locationRequest;
     private Context context;
+    private Realm realm;
 
     public void connectGoogleClient(Context context) {
         this.context = context;
@@ -43,7 +47,7 @@ public class GPSLocation implements GoogleApiClient.ConnectionCallbacks, GoogleA
 
     @SuppressWarnings("MissingPermission")
     public void startLocationUpdates() {
-
+        realm = Realm.getDefaultInstance();
         mGoogleApiClient.connect();
         if (mGoogleApiClient.isConnected()) {
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
@@ -57,7 +61,6 @@ public class GPSLocation implements GoogleApiClient.ConnectionCallbacks, GoogleA
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
 
             mGoogleApiClient.disconnect();
-            locationRequest = null;
         }
     }
 
@@ -84,6 +87,13 @@ public class GPSLocation implements GoogleApiClient.ConnectionCallbacks, GoogleA
     }
 
     public void handleNewGPSLocation(Location location) {
-        FileSensorLog.writeToGPSFile(location);
+//        FileSensorLog.writeToGPSFile(location);
+        if (realm == null) {
+            return;
+        }
+        GpsValueModel gpsValueModel = new GpsValueModel();
+        gpsValueModel.setTimeStamp(System.currentTimeMillis() + "");
+        gpsValueModel.setLocation(location);
+        realm.copyToRealm(gpsValueModel);
     }
 }

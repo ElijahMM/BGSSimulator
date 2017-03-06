@@ -14,8 +14,10 @@ import java.util.Queue;
  * Created by mihai on 06.03.2017.
  */
 
+
 public interface DownloadData {
     Queue<BarometerValueModel> getBarometerDatas();
+
 
     Queue<OrientationValueModel> getOrientationDatas();
 
