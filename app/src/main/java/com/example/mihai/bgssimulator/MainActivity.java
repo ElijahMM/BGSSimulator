@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.mihai.bgssimulator.RealmClasses.RealmConfigurations.RealmUtils;
 import com.example.mihai.bgssimulator.RealmClasses.TestItem;
 import com.example.mihai.bgssimulator.Simultor.FeedData.DownloadData;
 import com.example.mihai.bgssimulator.Simultor.FeedData.SensorManagement;
@@ -85,6 +86,9 @@ public class MainActivity extends AppCompatActivity implements SensorManagement.
                 }
             }
         });
+
+//        testDB();
+
     }
 
 
