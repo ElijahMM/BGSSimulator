@@ -8,15 +8,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import com.example.mihai.bgssimulator.RealmClasses.TestItem;
-import com.example.mihai.bgssimulator.Simultor.FeedData.DownloadData;
+
+import com.example.mihai.bgssimulator.RealmClasses.RealmConfigurations.TestItem;
 import com.example.mihai.bgssimulator.Simultor.FeedData.SensorManagement;
 import com.example.mihai.bgssimulator.Simultor.FileSensorLog;
 import com.example.mihai.bgssimulator.Simultor.GatherData.GPSLocation;
 import com.example.mihai.bgssimulator.Simultor.GatherData.SensorHub;
 import com.example.mihai.bgssimulator.Utils.AbsValues;
-import com.example.mihai.bgssimulator.RealmClasses.RealmConfigurations.RealmConfig;
-import com.example.mihai.bgssimulator.RealmClasses.TestItem;
+
 
 import io.realm.Realm;
 import io.realm.RealmObject;

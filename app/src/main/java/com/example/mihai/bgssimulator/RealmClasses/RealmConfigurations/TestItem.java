@@ -1,9 +1,9 @@
-package com.example.mihai.bgssimulator.RealmClasses;
+package com.example.mihai.bgssimulator.RealmClasses.RealmConfigurations;
 
 import io.realm.RealmObject;
 
 /**
- * Created by silviu on 03.03.2017.
+ * Created by mihai on 06.03.2017.
  */
 
 public class TestItem extends RealmObject {

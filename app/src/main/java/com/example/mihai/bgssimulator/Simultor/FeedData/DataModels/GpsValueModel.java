@@ -6,16 +6,22 @@ package com.example.mihai.bgssimulator.Simultor.FeedData.DataModels;
 
 import android.location.Location;
 
+import io.realm.RealmObject;
+
 /**
  * This class represents the model of the GPS value as it is received from GPS Sensor
  */
-public class GpsValueModel {
+public class GpsValueModel extends RealmObject {
 
-    Long timeStamp;
-    private Location location = new Location("");
+    private Long timeStamp = 0l;
+    private Double lat = 0d;
+    private Double lng = 0d;
+    private Float acc = 0f;
+    private Double alt = 0d;
 
     public GpsValueModel() {
     }
+
 
     public Long getTimeStamp() {
         return timeStamp;
@@ -26,10 +32,18 @@ public class GpsValueModel {
     }
 
     public Location getLocation() {
+        Location location = new Location("");
+        location.setLatitude(this.lat);
+        location.setLongitude(this.lng);
+        location.setAltitude(this.alt);
+        location.setAccuracy(this.acc);
         return location;
     }
 
     public void setLocation(Location location) {
-        this.location = location;
+        this.lat = location.getLatitude();
+        this.lng = location.getLongitude();
+        this.acc = location.getAccuracy();
+        this.alt = location.getAltitude();
     }
 }
