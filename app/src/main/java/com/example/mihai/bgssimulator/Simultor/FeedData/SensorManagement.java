@@ -43,10 +43,7 @@ public class SensorManagement {
         this.context = context;
         this.sensorResult = sensorResult;
         downloadData = new DownloadData(this.context);
-
-
     }
-
 
     //region get data
     private void feedBarometer() {
@@ -70,14 +67,12 @@ public class SensorManagement {
     }
     //endregion
 
-
     public void registerFakeSensor() {
         feedPdr();
         feedGps();
         feedBarometer();
         feedOrientation();
     }
-
 
     public void stop() {
         gpsValueQueue.clear();

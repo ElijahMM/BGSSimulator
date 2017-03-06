@@ -1,13 +1,15 @@
 package com.example.mihai.bgssimulator.Simultor.FeedData.DataModels;
 
+import io.realm.RealmObject;
+
 /**
  * Created by mihai on 24.02.2017.
  */
 
-public class BarometerValueModel {
+public class BarometerValueModel extends RealmObject {
 
-    Long timeStamp;
-    Double barometerValue;
+    Long timeStamp = 0l;
+    Double barometerValue = 0d;
 
 
     public BarometerValueModel() {

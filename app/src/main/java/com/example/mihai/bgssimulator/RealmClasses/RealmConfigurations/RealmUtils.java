@@ -1,13 +1,14 @@
 package com.example.mihai.bgssimulator.RealmClasses.RealmConfigurations;
 
 import com.example.mihai.bgssimulator.RealmClasses.ActivityRecognitionItem;
-import com.example.mihai.bgssimulator.RealmClasses.BarometerItem;
-import com.example.mihai.bgssimulator.RealmClasses.LocationItem;
-import com.example.mihai.bgssimulator.RealmClasses.OrientationItem;
-import com.example.mihai.bgssimulator.RealmClasses.StepItem;
-import com.example.mihai.bgssimulator.RealmClasses.TestItem;
+import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels.BarometerValueModel;
+import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels.GpsValueModel;
+import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels.OrientationValueModel;
+import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels.PDRValueModel;
 
 import io.realm.Realm;
+
+import static java.lang.StrictMath.E;
 
 /**
  * Created by silviu on 06.03.2017.
@@ -15,32 +16,27 @@ import io.realm.Realm;
 
 public class RealmUtils {
 
-    public static void deleteStepItems(Realm realm) {
-        realm.where(StepItem.class).findAll().deleteAllFromRealm();
+    public static void deleteBarometerValues(Realm realm) {
+        realm.where(BarometerValueModel.class).findAll().deleteAllFromRealm();
     }
 
-    public static void deleteAcitivtyRecognitionItems(Realm realm) {
-        realm.where(ActivityRecognitionItem.class).findAll().deleteAllFromRealm();
+    public static void deleteGPSValues(Realm realm) {
+        realm.where(GpsValueModel.class).findAll().deleteAllFromRealm();
     }
 
-    public static void deleteBarometerItems(Realm realm) {
-        realm.where(BarometerItem.class).findAll().deleteAllFromRealm();
+    public static void deleteOrientationValues(Realm realm) {
+        realm.where(OrientationValueModel.class).findAll().deleteAllFromRealm();
     }
 
-    public static void deleteLocationItems(Realm realm) {
-        realm.where(LocationItem.class).findAll().deleteAllFromRealm();
-    }
-
-    public static void deleteOrientationItems(Realm realm) {
-        realm.where(OrientationItem.class).findAll().deleteAllFromRealm();
+    public static void deletePDRValues(Realm realm) {
+        realm.where(PDRValueModel.class).findAll().deleteAllFromRealm();
     }
 
     public static void deleteAllSensorData(Realm realm) {
-        deleteAcitivtyRecognitionItems(realm);
-        deleteBarometerItems(realm);
-        deleteLocationItems(realm);
-        deleteOrientationItems(realm);
-        deleteStepItems(realm);
+        deleteBarometerValues(realm);
+        deleteGPSValues(realm);
+        deleteOrientationValues(realm);
+        deletePDRValues(realm);
     }
 
     /**
