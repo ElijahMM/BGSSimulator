@@ -1,4 +1,4 @@
-package com.example.mihai.bgssimulator.Simultor.FeedData.DataModels;
+package com.example.mihai.bgssimulator.RealmClasses.RealmModels;
 
 import io.realm.RealmObject;
 

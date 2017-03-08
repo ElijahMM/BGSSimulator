@@ -2,18 +2,20 @@ package com.example.mihai.bgssimulator.Simultor.FeedData;
 
 import android.content.Context;
 import android.location.Location;
-import android.os.Handler;
-import android.os.Looper;
+import android.util.Log;
 
-import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels.BarometerValueModel;
-import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels.GpsValueModel;
-import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels.OrientationValueModel;
-import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels.PDRValueModel;
+import com.example.mihai.bgssimulator.RealmClasses.RealmModels.BarometerValueModel;
+import com.example.mihai.bgssimulator.RealmClasses.RealmModels.GpsValueModel;
+import com.example.mihai.bgssimulator.RealmClasses.RealmModels.OrientationValueModel;
+import com.example.mihai.bgssimulator.RealmClasses.RealmModels.PDRValueModel;
+import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels._BarometerValueModel;
+import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels._OrientationValueModel;
+import com.example.mihai.bgssimulator.Simultor.Timer.PreciseCountdown;
 import com.example.mihai.bgssimulator.Utils.Settings;
+import com.example.mihai.bgssimulator.Utils.Util;
 
-import java.util.Queue;
-
-import static com.google.android.gms.internal.zzsu.OB;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by mihai on 03.03.2017.
@@ -23,7 +25,7 @@ public class SensorManagement {
 
     Context context;
     SensorResult sensorResult;
-
+    PreciseCountdown countdown;
     /**
      * retrieve data from files
      */
@@ -33,14 +35,11 @@ public class SensorManagement {
      * each queue will store the recorded data from server, and as we proceed with data precessing, elements  will be removed.
      * In the end we will have an empty queue, which means the simulation has stopped
      */
-    private Queue<BarometerValueModel> barometerValueQueue;
-    private Queue<OrientationValueModel> orientationValueQueue;
-    private Queue<PDRValueModel> pdrValueQueue;
-    private Queue<GpsValueModel> gpsValueQueue;
+    private List<BarometerValueModel> barometerValueQueue;
+    private List<OrientationValueModel> orientationValueQueue;
+    private List<PDRValueModel> pdrValueQueue;
+    private List<GpsValueModel> gpsValueQueue;
 
-    private Handler mHandler = new Handler(Looper.getMainLooper());
-
-    private Long startTimeStamp, currentTimeStamp;
 
     public SensorManagement(Context context, SensorResult sensorResult) {
         this.context = context;
@@ -53,27 +52,22 @@ public class SensorManagement {
         }
     }
 
-
     //region get data
 
     private void feedBarometer() {
         barometerValueQueue = downloadData.getBarometerDatas();
-        startTimeStamp = downloadData.getFirstTimeStamp();
     }
 
     private void feedGps() {
         gpsValueQueue = downloadData.getGPSDatas();
-        startTimeStamp = downloadData.getFirstTimeStamp();
     }
 
     private void feedPdr() {
         pdrValueQueue = downloadData.getPDRDatas();
-        startTimeStamp = downloadData.getFirstTimeStamp();
     }
 
     private void feedOrientation() {
         orientationValueQueue = downloadData.getOrientationDatas();
-        startTimeStamp = downloadData.getFirstTimeStamp();
     }
     //endregion
 
@@ -86,87 +80,100 @@ public class SensorManagement {
     }
 
     public void stop() {
-        gpsValueQueue.clear();
-        barometerValueQueue.clear();
-        pdrValueQueue.clear();
-        orientationValueQueue.clear();
+//        gpsValueQueue.clear();
+//        barometerValueQueue.clear();
+//        pdrValueQueue.clear();
+//        orientationValueQueue.clear();
+        countdown.stop();
     }
 
 
-    //region start feed data
-    public void startBarometer() {
-        if (!barometerValueQueue.isEmpty()) {
-            new Runnable() {
-                @Override
-                public void run() {
-                    if (barometerValueQueue.isEmpty()) {
-                        mHandler.removeCallbacksAndMessages(null); // stop runnable
-                    } else {
-                        currentTimeStamp = barometerValueQueue.peek().getTimeStamp();
-                        mHandler.postDelayed(this, Math.abs(currentTimeStamp - startTimeStamp)); // delay with first timeStamp - second Timestamp
-                        startTimeStamp = currentTimeStamp;
-                        sensorResult.gotBarometer(barometerValueQueue.poll().getBarometerValue());
-                    }
-                }
-            }.run();
-        }
-
-    }
-
-
-    public void startGps() {
-        if (!gpsValueQueue.isEmpty()) {
-            new Runnable() {
-                @Override
-                public void run() {
-                    if (gpsValueQueue.isEmpty()) {
-                        mHandler.removeCallbacksAndMessages(null); // stop runnable
-                    } else {
-                        currentTimeStamp = gpsValueQueue.peek().getTimeStamp();
-                        mHandler.postDelayed(this, Math.abs(currentTimeStamp - startTimeStamp)); // delay with first timeStamp - second Timestamp
-                        startTimeStamp = currentTimeStamp;
-                        sensorResult.gotLocation(gpsValueQueue.poll().getLocation());
-                    }
-                }
-            }.run();
-
-        }
-    }
-
+    //region orientation process
     public void startOrientation() {
-        if (!orientationValueQueue.isEmpty()) {
-            new Runnable() {
-                @Override
-                public void run() {
-                    if (orientationValueQueue.isEmpty()) {
-                        mHandler.removeCallbacksAndMessages(null); // stop runnable
-                    } else {
-                        currentTimeStamp = orientationValueQueue.peek().getTimeStamp();
-                        mHandler.postDelayed(this, Math.abs(currentTimeStamp - startTimeStamp)); // delay with first timeStamp - second Timestamp
-                        startTimeStamp = currentTimeStamp;
-                        sensorResult.gotOrientation(orientationValueQueue.poll().getOrientationValue());
-                    }
+        final List<_OrientationValueModel> aux = preProcessOrientationData();
+        final long totalTime = Math.abs(orientationValueQueue.get(0).getTimeStamp() - Util.getLastElement(orientationValueQueue).getTimeStamp());
+        Log.w("Time", String.valueOf(totalTime));
+        this.countdown = new PreciseCountdown(totalTime, 100, 0) {
+            @Override
+            public void onTick(long timeLeft) {
+                if (aux.get(0).getTimeStamp() == 0) {
+                    sensorResult.gotOrientation(aux.get(0).getOrientationValue());
+                    aux.remove(0);
+                } else if (totalTime - timeLeft >= aux.get(0).getTimeStamp()) {
+                    sensorResult.gotOrientation(aux.get(0).getOrientationValue());
+                    aux.remove(0);
                 }
-            }.run();
-        }
+            }
+
+            @Override
+            public void onFinished() {
+                Log.w("Time", "Done");
+            }
+        };
+        countdown.start();
+
     }
 
-    public void startPDR() {
-        if (!pdrValueQueue.isEmpty()) {
-            new Runnable() {
-                @Override
-                public void run() {
-                    if (pdrValueQueue.isEmpty()) {
-                        mHandler.removeCallbacksAndMessages(null); // stop runnable
-                    } else {
-                        currentTimeStamp = pdrValueQueue.peek().getTimeStamp();
-                        mHandler.postDelayed(this, Math.abs(currentTimeStamp - startTimeStamp)); // delay with first timeStamp - second Timestamp
-                        startTimeStamp = currentTimeStamp;
-                        sensorResult.gotStepResult(pdrValueQueue.poll().getStep());
-                    }
-                }
-            }.run();
+    private List<_OrientationValueModel> preProcessOrientationData() {
+        List<_OrientationValueModel> aux = new ArrayList<>();
+        for (int i = 0; i < orientationValueQueue.size(); i++) {
+            _OrientationValueModel a = new _OrientationValueModel();
+            a.setTimeStamp(String.valueOf(orientationValueQueue.get(i).getTimeStamp()));
+            a.setOrientationValue(orientationValueQueue.get(i).getOrientationValue());
+            aux.add(a);
         }
+        for (int i = 1; i < aux.size(); i++) {
+            aux.get(i).setTimeStamp(String.valueOf(Math.abs(orientationValueQueue.get(i - 1).getTimeStamp() - orientationValueQueue.get(i).getTimeStamp())));
+        }
+        aux.get(0).setTimeStamp("0");
+        return aux;
+    }
+    //endregion
+
+
+    // region barometer process
+    public void startBarometer() {
+        final List<_BarometerValueModel> aux = preProcessBarometerData();
+        final long totalTime = Math.abs(barometerValueQueue.get(0).getTimeStamp() - Util.getLastElement(barometerValueQueue).getTimeStamp());
+        Log.w("Time", String.valueOf(totalTime));
+        this.countdown = new PreciseCountdown(totalTime, 100, 0) {
+            @Override
+            public void onTick(long timeLeft) {
+                if (aux.get(0).getBarometerValue() != null) {
+                    if (aux.get(0).getTimeStamp() == 0) {
+                        sensorResult.gotBarometer(aux.get(0).getBarometerValue());
+                        aux.remove(0);
+                    } else if (totalTime - timeLeft >= aux.get(0).getTimeStamp()) {
+                        sensorResult.gotBarometer(aux.get(0).getBarometerValue());
+                        aux.remove(0);
+                    }
+                } else {
+                    aux.remove(0);
+                }
+            }
+
+            @Override
+            public void onFinished() {
+                Log.w("Time", "Done");
+            }
+        };
+        countdown.start();
+
+    }
+
+    private List<_BarometerValueModel> preProcessBarometerData() {
+        List<_BarometerValueModel> aux = new ArrayList<>();
+        for (int i = 0; i < orientationValueQueue.size(); i++) {
+            _BarometerValueModel a = new _BarometerValueModel();
+            a.setTimeStamp(String.valueOf(barometerValueQueue.get(i).getTimeStamp()));
+            a.setBarometerValue(barometerValueQueue.get(i).getBarometerValue());
+            aux.add(a);
+        }
+        for (int i = 1; i < aux.size(); i++) {
+            aux.get(i).setTimeStamp(String.valueOf(Math.abs(barometerValueQueue.get(i - 1).getTimeStamp() - barometerValueQueue.get(i).getTimeStamp())));
+        }
+        aux.get(0).setTimeStamp("0");
+        return aux;
     }
     //endregion
 

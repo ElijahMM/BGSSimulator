@@ -1,15 +1,11 @@
 package com.example.mihai.bgssimulator.RealmClasses.RealmConfigurations;
 
-import com.example.mihai.bgssimulator.RealmClasses.ActivityRecognitionItem;
-import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels.BarometerValueModel;
-import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels.GpsValueModel;
-import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels.OrientationValueModel;
-import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels.PDRValueModel;
-import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels.StartTimeModel;
+import com.example.mihai.bgssimulator.RealmClasses.RealmModels.BarometerValueModel;
+import com.example.mihai.bgssimulator.RealmClasses.RealmModels.GpsValueModel;
+import com.example.mihai.bgssimulator.RealmClasses.RealmModels.OrientationValueModel;
+import com.example.mihai.bgssimulator.RealmClasses.RealmModels.PDRValueModel;
 
 import io.realm.Realm;
-
-import static java.lang.StrictMath.E;
 
 /**
  * Created by silviu on 06.03.2017.
@@ -40,16 +36,8 @@ public class RealmUtils {
         deleteOrientationValues(realm);
         deletePDRValues(realm);
 
-        realm.where(StartTimeModel.class).findAll().deleteAllFromRealm();
 
         realm.commitTransaction();
 
-    }
-
-    /**
-     * delete test objects
-     */
-    public static void deleteTestItems(Realm realm) {
-        realm.where(TestItem.class).findAll().deleteAllFromRealm();
     }
 }

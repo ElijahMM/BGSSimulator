@@ -1,29 +1,20 @@
 package com.example.mihai.bgssimulator;
 
-import android.content.Intent;
 import android.location.Location;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
 import com.example.mihai.bgssimulator.RealmClasses.RealmConfigurations.RealmUtils;
-import com.example.mihai.bgssimulator.RealmClasses.RealmConfigurations.TestItem;
-
 import com.example.mihai.bgssimulator.Simultor.FeedData.SensorManagement;
 import com.example.mihai.bgssimulator.Simultor.FileSensorLog;
 import com.example.mihai.bgssimulator.Simultor.GatherData.GPSLocation;
 import com.example.mihai.bgssimulator.Simultor.GatherData.SensorHub;
 import com.example.mihai.bgssimulator.Utils.AbsValues;
 
-
-import junit.framework.Test;
-
 import io.realm.Realm;
-import io.realm.RealmResults;
-
-import static io.realm.Realm.getDefaultInstance;
 
 public class MainActivity extends AppCompatActivity implements SensorManagement.SensorResult {
 
@@ -110,10 +101,8 @@ public class MainActivity extends AppCompatActivity implements SensorManagement.
 
 
     public void start() {
-        sensorManagement.startBarometer();
-        sensorManagement.startGps();
         sensorManagement.startOrientation();
-        sensorManagement.startPDR();
+        sensorManagement.startBarometer();
     }
 
 
@@ -135,21 +124,6 @@ public class MainActivity extends AppCompatActivity implements SensorManagement.
     @Override
     public void gotOrientation(Float orientationValue) {
         Log.i("Orientation:", orientationValue + "");
-        //testDB();
     }
 
-    public void testDB() {
-        Realm realm = getDefaultInstance();
-        final TestItem testItem1 = new TestItem("a value", 444, true);
-        final TestItem testItem2 = new TestItem("another string", 445, false);
-
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                realm.copyToRealm(testItem1);
-                realm.copyToRealm(testItem2);
-            }
-        });
-        realm.close();
-    }
 }

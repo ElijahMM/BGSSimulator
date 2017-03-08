@@ -5,18 +5,20 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.provider.Settings;
 import android.util.Log;
 
-import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels.BarometerValueModel;
-import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels.OrientationValueModel;
-import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels.StartTimeModel;
-import com.example.mihai.bgssimulator.Simultor.FileSensorLog;
+import com.example.mihai.bgssimulator.RealmClasses.RealmModels.BarometerValueModel;
+import com.example.mihai.bgssimulator.RealmClasses.RealmModels.OrientationValueModel;
+import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels._BarometerValueModel;
+import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels._OrientationValueModel;
+import com.example.mihai.bgssimulator.Simultor.Timer.PreciseCountdown;
 import com.hoan.dsensor_master.DProcessedSensor;
-import com.hoan.dsensor_master.DSensor;
 import com.hoan.dsensor_master.DSensorEvent;
 import com.hoan.dsensor_master.DSensorManager;
 import com.hoan.dsensor_master.interfaces.DProcessedEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import io.realm.Realm;
 
@@ -29,12 +31,23 @@ public class SensorHub implements SensorEventListener {
     private Context context;
     private Realm realm;
 
+
+    //region Sensor declarations
     private SensorManager mSensorManager;
     private Sensor mStepCounterSensor;
     private Sensor mOrientationSensor;
     private Sensor resultSensor;
     private Sensor barometer;
+    //endregion
 
+    private PreciseCountdown orientationSensorTimer;
+
+
+    List<_OrientationValueModel> auxOrientationList = new ArrayList<>();
+    private float dSensorValue;
+
+    List<_BarometerValueModel> auxBarometerList = new ArrayList<>();
+    private Double barometerValue;
 
     /**
      * pdr variables
@@ -54,7 +67,6 @@ public class SensorHub implements SensorEventListener {
     public void registerListeners() {
         realm = Realm.getDefaultInstance();
         realm.beginTransaction();
-        realm.copyToRealm(new StartTimeModel(System.currentTimeMillis()));
         mSensorManager.registerListener(this, mStepCounterSensor, SensorManager.SENSOR_DELAY_FASTEST);
         mSensorManager.registerListener(this, mOrientationSensor, SensorManager.SENSOR_DELAY_FASTEST);
         mSensorManager.registerListener(this, barometer, SensorManager.SENSOR_DELAY_NORMAL);
@@ -62,11 +74,26 @@ public class SensorHub implements SensorEventListener {
                 new DProcessedEventListener() {
                     @Override
                     public void onProcessedValueChanged(DSensorEvent dSensorEvent) {
-                        if (realm != null)
-                            realm.copyToRealm(new OrientationValueModel(System.currentTimeMillis(), dSensorEvent.values[0]));
-//                        FileSensorLog.writeToOrientationFile(dSensorEvent.values[0]);
+                        dSensorValue = dSensorEvent.values[0];
                     }
                 });
+        writeOrientationToDB();
+    }
+
+    private void writeOrientationToDB() {
+        orientationSensorTimer = new PreciseCountdown(60000, 100, 0) {
+            @Override
+            public void onTick(long timeLeft) {
+                auxOrientationList.add(new _OrientationValueModel(System.currentTimeMillis(), dSensorValue));
+                auxBarometerList.add(new _BarometerValueModel(System.currentTimeMillis(), barometerValue));
+                Log.i("Time", String.valueOf(dSensorValue));
+            }
+
+            @Override
+            public void onFinished() {
+            }
+        };
+        orientationSensorTimer.start();
     }
 
     public void unregisterListeners() {
@@ -75,9 +102,20 @@ public class SensorHub implements SensorEventListener {
             mSensorManager.unregisterListener(this, mOrientationSensor);
             mSensorManager.unregisterListener(this, barometer);
             DSensorManager.stopDSensor();
+            orientationSensorTimer.stop();
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+
+        for (_OrientationValueModel model : auxOrientationList) {
+            realm.copyToRealm(new OrientationValueModel(model.getTimeStamp(), model.getOrientationValue()));
+        }
+
+        for (_BarometerValueModel model : auxBarometerList) {
+            realm.copyToRealm(new BarometerValueModel(model.getTimeStamp(), model.getBarometerValue()));
+        }
+
         Log.w("SensorHub", realm.where(OrientationValueModel.class).count() + " orientation values");
         realm.commitTransaction();
         realm = null;
@@ -110,8 +148,7 @@ public class SensorHub implements SensorEventListener {
 
         if (resultSensor.getType() == Sensor.TYPE_PRESSURE) {
             // FileSensorLog.writeToAltitudeFile(value);
-            if (realm != null)
-                realm.copyToRealm(new BarometerValueModel(System.currentTimeMillis(), (double) value));
+            barometerValue = Double.valueOf(values[0]);
         }
     }
 

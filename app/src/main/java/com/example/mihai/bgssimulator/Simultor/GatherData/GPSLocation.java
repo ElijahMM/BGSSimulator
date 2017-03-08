@@ -6,8 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels.GpsValueModel;
-import com.example.mihai.bgssimulator.Simultor.FileSensorLog;
+import com.example.mihai.bgssimulator.RealmClasses.RealmModels.GpsValueModel;
 import com.example.mihai.bgssimulator.Utils.AbsValues;
 import com.example.mihai.bgssimulator.Utils.Settings;
 import com.google.android.gms.common.ConnectionResult;

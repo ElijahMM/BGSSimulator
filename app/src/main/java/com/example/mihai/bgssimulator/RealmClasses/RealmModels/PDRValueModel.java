@@ -1,6 +1,4 @@
-package com.example.mihai.bgssimulator.Simultor.FeedData.DataModels;
-
-import android.content.Intent;
+package com.example.mihai.bgssimulator.RealmClasses.RealmModels;
 
 import io.realm.RealmObject;
 

@@ -1,14 +1,11 @@
 package com.example.mihai.bgssimulator.Simultor.FeedData;
 
-import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels.BarometerValueModel;
-import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels.GpsValueModel;
-import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels.OrientationValueModel;
-import com.example.mihai.bgssimulator.Simultor.FeedData.DataModels.PDRValueModel;
-import com.example.mihai.bgssimulator.Simultor.FileSensorLog;
-import com.example.mihai.bgssimulator.Utils.AbsValues;
+import com.example.mihai.bgssimulator.RealmClasses.RealmModels.BarometerValueModel;
+import com.example.mihai.bgssimulator.RealmClasses.RealmModels.GpsValueModel;
+import com.example.mihai.bgssimulator.RealmClasses.RealmModels.OrientationValueModel;
+import com.example.mihai.bgssimulator.RealmClasses.RealmModels.PDRValueModel;
 
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.List;
 
 /**
  * Created by mihai on 06.03.2017.
@@ -16,14 +13,14 @@ import java.util.Queue;
 
 
 public interface DownloadData {
-    Queue<BarometerValueModel> getBarometerDatas();
+    List<BarometerValueModel> getBarometerDatas();
 
 
-    Queue<OrientationValueModel> getOrientationDatas();
+    List<OrientationValueModel> getOrientationDatas();
 
-    Queue<GpsValueModel> getGPSDatas();
+    List<GpsValueModel> getGPSDatas();
 
-    Queue<PDRValueModel> getPDRDatas();
+    List<PDRValueModel> getPDRDatas();
 
     Long getFirstTimeStamp();
 
